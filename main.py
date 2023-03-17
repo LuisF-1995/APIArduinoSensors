@@ -46,8 +46,11 @@ async def root():
 @app.get("/getSensorData")
 async def getSensorData():
     while True:
-        sensorData = DataCollection.DataCollectFromArduino.getSensorData()
-        return json.loads(sensorData)
+        try:
+            sensorData = DataCollection.DataCollectFromArduino.getSensorData()
+            return json.loads(sensorData)
+        except:
+            return {"ComunicationError": "No hay conexión del PC con la placa de arduino en el puerto COM5"}
 
 
 html = """
@@ -85,8 +88,11 @@ async def get():
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     while True:
-        data = DataCollection.DataCollectFromArduino.getSensorData()
-        await websocket.send_text(data)
+        try:
+            data = DataCollection.DataCollectFromArduino.getSensorData()
+            await websocket.send_text(data)
+        except:
+            await websocket.send_text('{"ComunicationError": "No hay conexión del PC con la placa de arduino en el puerto COM5"}')
 
 
 class SensorDHT11Data(BaseModel):
@@ -103,7 +109,7 @@ class JsonSensorData(BaseModel):
     PorcentajeLuminosidad: float
 
 
-sensorDataPosted = {}
+sensorDataPosted = {"informationStatus": "Arduino aun no ha enviado información"}
 
 @app.post("/postSensorData")
 async def postSensorData(sensorData: JsonSensorData):
