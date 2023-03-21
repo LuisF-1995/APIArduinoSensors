@@ -4,9 +4,14 @@ from fastapi.responses import HTMLResponse
 import DataCollection.DataCollectFromArduino
 from typing import Dict, List, Union
 from pydantic import BaseModel
+import uvicorn
 
 
 app = FastAPI()
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=80, reload=True, workers=1)
+
 
 RootPageHtml = """
 <!DOCTYPE html>
@@ -64,7 +69,7 @@ html = """
         <div id='messages'>
         </div>
         <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
+            var ws = new WebSocket("ws://localhost:80/ws");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 messages.innerHTML = `${event.data}`
