@@ -1,9 +1,10 @@
 import serial
 import sys
 from serial import SerialException
+import json
+import requests
 
 serialCOMport = 'COM5'
-
 
 def getSensorData():
     try:
@@ -21,6 +22,16 @@ def getSensorData():
 
     try:
         sensorsReadingFromArduino = getSensorData.arduinoBoard.readline().decode('utf-8')
+
+        jsonSend = json.loads(sensorsReadingFromArduino)
+        postUrl = "https://api-dragonfly.fly.dev/postSensorData"
+        headers = {'Content-type': 'application/json'}
+        response = requests.post(postUrl, json=jsonSend, headers=headers)
+        if response.status_code == 200:
+            print("Petición exitosa!")
+        else:
+            print("Error en la petición")
+
         return sensorsReadingFromArduino
     except serial.SerialException:
         getSensorData.arduinoBoard = None
