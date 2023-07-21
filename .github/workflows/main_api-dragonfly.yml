@@ -30,14 +30,15 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build Docker image
-        run: docker build -t dragonfly-app-image .
+
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v2
         with:
           name: python-app
-          path: .
+          path: |
+            . 
+            !venv/
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,18 +54,8 @@ jobs:
           name: python-app
           path: .
 
-      - name: Set up Docker Compose
-        run: |
-          echo "version: '3.9'" >> docker-compose.yml
-          echo "services:" >> docker-compose.yml
-          echo "  python-app:" >> docker-compose.yml
-          echo "    image: dragonfly-app-image" >> docker-compose.yml
-          echo "    ports:" >> docker-compose.yml
-          echo "      - '80:80'" >> docker-compose.yml
-          echo "    command: python main.py --host 0.0.0.0 --port 80" >> docker-compose.yml
-
-      - name: Start Python App with Docker Compose
-        run: docker-compose up -d
+      - name: Execute python app
+        run: python main.py --host localhost --port 80
           
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
