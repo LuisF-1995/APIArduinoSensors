@@ -4,7 +4,7 @@ from serial import SerialException
 import json
 import requests
 
-serialCOMport = 'COM5'
+serialCOMport = 'COM7'
 
 def getSensorData():
     try:
@@ -14,7 +14,7 @@ def getSensorData():
 
     if not getSensorData.arduinoBoard:
         try:
-            getSensorData.arduinoBoard = serial.Serial(serialCOMport, 9600)
+            getSensorData.arduinoBoard = serial.Serial(serialCOMport, 115200)
             getSensorData.arduinoConnected = True
         except SerialException:
             getSensorData.arduinoConnected = False

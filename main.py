@@ -112,6 +112,7 @@ class JsonSensorData(BaseModel):
     PorcentajeHumedadSuelo: float
     LuminosidadAnalogaSensor: int
     PorcentajeLuminosidad: float
+    SampleDateTime: str
 
 
 sensorDataPosted = {"informationStatus": "Arduino aun no ha enviado información"}
